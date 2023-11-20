@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html class="mobile">
+	<head>
+		<title>Songtrip</title>
+		<script>
+			var popupLoader
+			function showPopupLoader(cb){
+				if(popupLoader) return cb && cb()
+				const width = 150, height = 142
+				require('nw.gui').Window.open('./popup.html', {frame:false, width, height, id: 'popup', show: false, transparent: true, always_on_top: true}, win => {
+					popupLoader = win
+					win.moveTo(screen.availWidth - width - 18, screen.availHeight - height)
+					win.show()
+					cb && cb()
+				})
+			}
+			function hidePopupLoader(){
+				if(!popupLoader) return
+				popupLoader.hide()
+				popupLoader.close()
+				popupLoader = null
+			}
+			function fileFromArgs(args){
+				let file = false, fs = require('fs')
+				console.log('ARGS', args)
+				if(typeof(args) == 'string'){
+					let cmdline = args.replace(new RegExp('"([^"]+)"', 'g'), a => {
+						return a.replace(new RegExp('\\s', 'g'), '&nbsp;')
+					}).split(' ')
+					args = []
+					for(let i = 0, length = cmdline.length, arg = ''; i < length; ++i) {
+						arg = cmdline[i].replace(new RegExp('&nbsp;', 'g'), ' ')
+						arg = arg.replace(new RegExp('"', 'g'), '')
+						args.push(arg)
+					}
+				}
+				Array.from(args).reverse().some(f => {
+					if(f.indexOf('.') != -1 && f.toLowerCase().indexOf('.exe') == -1 && fs.existsSync(f)){
+						file = f
+						return
+					}
+				})
+				console.log('ARGS FILE', file)
+				return file
+			}
+			const popupMode = !!fileFromArgs(nw.App.argv)
+			if(popupMode){
+				showPopupLoader()
+			} else {
+				require('nw.gui').Window.get().show()
+			}
+		</script>
+		<style type="text/css">
+			html, body, #splash {
+				overflow: hidden;
+			}
+			#splash {
+				position: absolute;
+				z-index: 9999999;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: black;
+				transition: top 0.25s linear 0s, opacity 0.25s linear 0.25s;
+			}
+			body #splash {
+				top: calc(-100vh - var(--header-height));
+				opacity: 0;				
+				pointer-events: none;
+			}
+			body.splash #splash {
+				top: 0;
+				opacity: 1;
+			}
+			#splash img {
+    			width: 28vh;
+			}
+		</style>
+	</head>
+	<body class="splash">
+		<div align="center" id="splash">
+			<img src="assets/images/default_icon_white.png" class="loading" />
+		</div>
+        <div id="main">
+			<div id="main-container">
+				<div id="main-container-left-items-index"></div>
+				<div id="main-container-left-items-index-magnifier"></div>
+				<div id="main-container-left">
+					<div id="main-container-left-header" class="desktop">
+						<span class="main-container-text logo">
+							<img src="assets/images/logo-white.png" onclick="setView(0)" />
+						</span>
+						<div class="by-selector">
+							<a class="main-container-text" href="javascript:;" data-target-view="0" data-language="BY_SONG">
+								<i class="fas fa-caret-down"></i>
+								<i class="fas fa-caret-right"></i>
+								<span data-language="BY_SONG"></span>
+							</a>
+							<a class="main-container-text" href="javascript:;" data-target-view="1" data-language="BY_MOOD">
+								<i class="fas fa-caret-down"></i>
+								<i class="fas fa-caret-right"></i>
+								<span data-language="BY_MOOD"></span>
+							</a>
+							<a class="main-container-text" href="javascript:;" data-target-view="2" data-language="BY_EPOCH">
+								<i class="fas fa-caret-down"></i>
+								<i class="fas fa-caret-right"></i>
+								<span data-language="BY_EPOCH"></span>
+							</a>
+						</div>
+						<span class="main-container-filter">
+							<span>
+								<input type="text" placeholder="" data-language="SEARCH" /><i class="fas fa-search"></i>
+							</span>
+						</span>
+						<a href="#" class="main-container-action main-container-action-options button-transparent" onclick="setView(3)" data-language="OPTIONS">
+							<i class="fas fa-cog"></i>
+						</a>
+						<a href="#" class="main-container-action main-container-action-about button-transparent" onclick="setView(4)" data-language="ABOUT">
+							<i class="fas fa-question-circle"></i>
+						</a>
+					</div>
+					<div id="main-container-left-header-mobile" class="mobile" style="display: flex;">
+						<span class="main-container-text logo">
+							<a href="#" id="mobile-home-icon" class="main-container-action main-container-action-about button-transparent">
+								<img src="assets/images/default_icon_white.png" />
+							</a>
+							<a href="#" id="mobile-back-icon" class="main-container-action main-container-action-about button-transparent" onclick="setView(0)">
+								<i class="fas fa-chevron-left"></i>
+							</a>
+							<div class="by-selector">
+								<a class="main-container-text" href="javascript:;" data-target-view="0" data-language="BY_SONG">
+									<i class="fas fa-caret-down"></i>
+									<i class="fas fa-caret-right"></i>
+									<span data-language="BY_SONG"></span>
+								</a>
+								<a class="main-container-text" href="javascript:;" data-target-view="1" data-language="BY_MOOD">
+									<i class="fas fa-caret-down"></i>
+									<i class="fas fa-caret-right"></i>
+									<span data-language="BY_MOOD"></span>
+								</a>
+								<a class="main-container-text" href="javascript:;" data-target-view="2" data-language="BY_EPOCH">
+									<i class="fas fa-caret-down"></i>
+									<i class="fas fa-caret-right"></i>
+									<span data-language="BY_EPOCH"></span>
+								</a>
+							</div>
+						</span>
+						<a href="#" class="main-container-action main-container-action-about button-transparent" onclick="setupMobileSearch()">
+							<i class="fas fa-search"></i>
+						</a>
+						<a href="#" class="main-container-action main-container-action-about button-transparent" onclick="setView(5)">
+							<i class="fas fa-ellipsis-v"></i>
+						</a>
+					</div>
+					<ol id="main-container-left-items"></ol>
+					<div id="map-wrap" align="center">
+						<div id="map-container">
+							<div id="map-top"><i class="fas fa-heartbeat"></i> <span data-language="ENERGETIC"></span></div>
+							<div id="map-container-center">
+								<div id="map-left"><i class="fas fa-sad-cry"></i> <span data-language="OBSCURE"></span></div>
+								<div id="map">
+									<div id="map-inner">
+										<div id="map-inner-dots"></div>
+									</div>
+									<div id="map-wizard"></div>
+								</div>
+								<div id="map-right"><i class="fas fa-laugh-beam"></i> <span data-language="POSITIVE"></span></div>
+							</div>
+							<div id="map-bottom"><i class="fas fa-couch"></i> <span data-language="RELAXED"></span></div>
+						</div>
+					</div>
+					<div id="filters">
+						<div align="center" id="filter-epoch">
+							<h2 data-language="EPOCH_FILTER"></h2>
+							<div id="epoch-tags-content">
+								<div slider id="epoch-slider">
+									<slider id="epoch-slider-input"></slider>
+								</div>
+							</div>
+						</div>
+						<div align="center" id="filter-genres">
+							<h2 data-language="GENRE_TAGS"></h2>
+							<div>
+								<a href="javascript:genreTagsSelectAll(true)" data-language="SELECT_ALL"></a>
+								<a href="javascript:genreTagsSelectAll(false)" data-language="UNSELECT_ALL"></a>
+							</div>
+							<div id="genre-tags-content"></div>
+						</div>
+					</div>
+					<div id="options">
+						<div align="center" id="option-algorithm" class="box">
+							<h2 data-language="ALGORITHM"></h2>
+							<div id="sliders"></div>
+							<div align="center">
+								<button onclick="resetSimilarityOptions(),generate(),updateSimilarityOptions()" class="button-main">
+									<i class="fas fa-undo"></i>
+									<span data-language="RESET"></span>
+								</button>
+								<button onclick="saveSimilarityOptions(),generate()" class="button-main">
+									<i class="fas fa-check"></i>
+									<span data-language="SAVE"></span>
+								</button>
+							</div>
+						</div>
+						<div align="center" id="option-library" class="box">
+							<div>
+								<h2 data-language="LIBRARY"></h2>
+								<button onclick="enterLibrarySetup()" class="button-main" style="white-space: normal;">
+									<i class="fas fa-folder"></i>&nbsp;
+									<span data-language="ADD_REMOVE_FOLDERS"></span>
+								</button>
+							</div>
+						</div>
+						<div align="center" id="option-theme" class="box">
+							<div>
+								<h2 data-language="THEME" style="text-align: center;"></h2>
+								<div>
+									<div>
+										<div id="theme-select"></div>
+										<div id="theme-custom" style="display: none;">
+											<div>
+												<input type="color" id="theme-main-color" value="#e66465" onchange="updateTheme()" style="margin-top: 0.5rem;">
+												<label for="theme-main-color">Color 1</label>
+											</div>
+											<div>
+												<input type="color" id="theme-secondary-color" value="#f6b73c" onchange="updateTheme()" style="margin-top: 0.5rem;">
+												<label for="theme-secondary-color">Color 2</label>
+											</div>
+										</div>		
+									</div>
+								</div>
+							</div>
+						</div>
+						<div align="center" id="option-others" class="box">
+							<div>
+								<h2 data-language="OTHERS" style="text-align: center;"></h2>
+								<div>
+									<div>
+										<label for="lang-select" data-language="CHANGELANG"></label>
+										<select id="lang-select" style="padding: 1px;"></select>
+									</div>
+									<div>
+										<label for="playlist-fmt-select" data-language="PLAYLIST_FORMAT"></label>
+										<select id="playlist-fmt-select" style="padding: 1px;"></select>
+									</div>
+									<div>
+										<label for="density" data-language="FONT_SIZE"></label>
+										<input id="density-input" type="range" min="0.8" max="1" step="any" onchange="density()" style="margin-left: 0;position: relative;top: calc(var(--density) * 0.15);" />
+									</div>
+									<div>
+										<label for="relative-paths" data-language="USE_RELATIVE_PATHS"></label>
+										<select id="relative-paths" style="padding: 1px;">
+											<option value="auto">Auto</option>
+											<option value="yes" data-language="YES"></option>
+											<option value="no" data-language="NO"></option>
+										</select>
+									</div>
+									<div>
+										<label for="backslashes" data-language="USE_BACKSLASHES"></label>
+										<select id="backslashes" style="padding: 1px;">
+											<option value="auto">Auto</option>
+											<option value="yes" data-language="YES"></option>
+											<option value="no" data-language="NO"></option>
+										</select>
+									</div>
+									<div>
+										<label for="choose-player" data-language="OPEN_WITH"></label>
+										<div>
+											<input type="text" id="choose-player" style="padding: 1px;" />
+											<input type="file" id="choose-player-file" style="padding: 1px;" onchange="jQuery('#choose-player').val(this.value).trigger('change')"/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="about">
+						<div align="center" id="option-about" class="box">
+							<div>
+								<h2 data-language="ABOUT"></h2>
+								<div data-language="ABOUT_INFO"></div>
+								<div>
+									&nbsp;
+									<br />
+									<table id="about-credits">
+										<tr><td>Songtrip:</td><td><a href="https://songtrip.in/" target="_system">songtrip.in</a></td></tr>
+										<tr><td>Essentia&trade;:</td><td><a href="https://essentia.upf.edu/" target="_system">essentia.upf.edu</a></td></tr>
+										<tr><td>AcousticBrainz&trade;:</td><td><a href="http://acousticbrainz.org" target="_system">acousticbrainz.org</a></td></tr>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div align="center">
+							<img src="assets/images/icon.png" style="width: 8rem; margin: 1rem 0.5rem 0.5rem 0.5rem;" />
+							<div style="display: flex; flex-direction: row;">
+								<div id="about-version"></div>&nbsp;&middot;&nbsp;
+								<a href="javascript:scanner.getHelp();void(0)" data-language="HELP"></a>
+							</div>
+						</div>
+					</div>
+					<div id="mobile-menu">
+						<ol id="mobile-menu-items">
+							<li class="main-container-item">
+								<span class="main-container-text" data-language="OPTIONS" onclick="setView(3)"></span>
+							</li>
+							<li class="main-container-item">
+								<span class="main-container-text" data-language="ABOUT" onclick="setView(4)"></span>
+							</li>
+						</ol>
+					</div>
+				</div>
+				<div id="main-container-right">
+					<div id="main-container-right-header" class="desktop">
+						<span class="main-container-text"></span>
+					</div>
+					<div id="main-container-right-header-mobile" class="mobile" style="display: flex;">
+						<span class="main-container-text logo">
+							<a href="#" id="mobile-back-icon" class="main-container-action main-container-action-about button-transparent" onclick="setView(0)">
+								<i class="fas fa-chevron-left"></i>
+							</a>
+						</span>
+						<a href="#" class="main-container-action main-container-action-about button-transparent" onclick="setView(4)" data-language="ABOUT">
+							<i class="fas fa-ellipsis-v"></i>
+						</a>
+					</div>
+					<ol id="main-container-right-items">
+						<li class="main-container-item main-container-item-center" align="center">
+							<img src="assets/images/icon.png" width="58" style="margin-right: 0.1rem;" />
+							<span style="max-width: 62%;" data-language="GENERATED_LIST_HERE"></span>
+						</li>
+					</ol>
+					<div id="vplayer">
+						<iframe src="./video-player.html"></iframe>
+					</div>
+				</div>
+			</div>
+        </div>
+		<div align="center" id="library-setup" class="layer">
+			<div id="main-container-left-header">
+				<a href="#" id="mobile-back-icon" class="main-container-action main-container-action-about button-transparent" onclick="setView(0)">
+					<i class="fas fa-chevron-left"></i>
+				</a>
+			</div>
+			<div class="layer-content">
+				<div id="library-setup-welcome">
+					<h2 data-language="WELCOME"></h2>
+					<p data-language="WELCOME_INFO"></p>
+				</div>
+				<div id="library-setup-common">
+					<h2 data-language="LIBRARY"></h2>
+					<div style="margin-bottom: 1.5em; opacity: .625;" data-language="LIBRARY_HINT"></div>								
+				</div>
+				<div id="library-setup-controls">
+					<div align="center" id="libraries"></div>
+					<div align="center">
+						<div id="library-folders"></div>
+						<button onclick="chooseFolder(addLibraryFolder)" class="button-main">
+							<i class="fas fa-plus"></i> 
+							<span data-language="ADD_MUSIC_FOLDER"></span>
+						</button>
+						<button onclick="scanLibraries().catch(alert)" class="button-main">
+							<i class="fas fa-check"></i>
+							<span data-language="SAVE"></span>
+						</button>
+					</div>
+				</div>
+				<div id="library-setup-wait">
+					<div align="center">
+						<img src="default_icon.png" style="max-height: 10vmin;margin-bottom: var(--density-15x);" />
+					</div>
+					<hr style="margin-bottom: var(--density-15x)" />
+					<div align="center" data-language="WILL_ANALYZE" style="font-size: 112.5%;"></div>
+					<div align="center">
+						<button onclick="goToTray()" class="button-main" style="margin-top: var(--density-15x);">
+							<i class="fas fa-check"></i>&nbsp;&nbsp;
+							<span data-language="MINIMIZE"></span>
+						</button>
+					</div>
+					<hr style="margin-top: var(--density)" />
+				</div>
+				<div id="library-setup-results"></div>
+			</div>
+		</div>
+		<div align="center" id="edit-song" class="layer">
+			<div id="main-container-left-header">
+				<a href="#" id="mobile-back-icon" class="main-container-action main-container-action-about button-transparent" onclick="setView(0)">
+					<i class="fas fa-chevron-left"></i>
+				</a>
+			</div>
+			<div class="layer-content">
+				<div class="box">
+					<div>
+						<h2 data-language="EDIT"></h2>
+						<div>&nbsp;</div>
+						<div id="edit-song-fields">
+							<div id="edit-song-warn" class="warn"></div>
+							<div>
+								<label for=" " data-language="TITLE"></label>
+								<input type="text" id="edit-song-title" />
+							</div>
+							<div>
+								<label for="edit-song-artists" data-language="ARTIST"></label>
+								<input type="text" id="edit-song-artists" />
+								<span class="note" data-language="SEPARATE_BY_COMMAS"></span>
+							</div>
+							<div>
+								<label for="edit-song-genres" data-language="GENRES"></label>
+								<select id="edit-song-genres" multiple></select>
+							</div>
+							<div>
+								<label for="edit-song-year" data-language="YEAR"></label>
+								<input type="number" id="edit-song-year" min="0" max="3000" maxlength="4" minlength="4" />
+							</div>
+							<div>
+								<label for="edit-song-language" data-language="LANGUAGE"></label>
+								<select id="edit-song-language"></select>
+							</div>
+							<div>
+								<button class="edit-save button-secondary">
+									<i class="fas fa-check"></i>
+									<span data-language="SAVE"></span>
+								</button>
+							</div>
+							<div></div>
+							<div class="note" id="edit-song-file" style="text-align: center; cursor: pointer;"></div>
+						</div>
+					</div>
+				</div>
+			</div>			
+		</div>
+		<div style="visibility: hidden;">
+			<audio id="warn" src="./assets/sounds/warn.mp3" preload="auto"></audio>
+		</div>
+        <div id="osd-root"></div>
+        <script defer src="node_modules/jquery/dist/jquery.min.js"></script>
+		<script defer src="assets/js/libs/jquery-sortable-min.js"></script>
+        <script defer src="assets/js/app/utils.js"></script>
+        <script defer src="assets/js/libs/moment.min.js"></script>           
+        <script defer src="modules/supercharge/supercharge.js"></script>
+        <script defer src="assets/js/app/app.js"></script>
+        <script defer src="modules/osd/client.js"></script>
+        <script defer src="node_modules/nouislider/dist/nouislider.min.js"></script>
+		<script defer src="node_modules/select2/dist/js/select2.min.js"></script>
+        <link rel="stylesheet" href="node_modules/nouislider/dist/nouislider.min.css" />
+        <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css" />
+        <link rel="stylesheet" href="assets/css/all.min.css" />
+        <link rel="stylesheet" href="assets/css/app.css" />
+	</body>
+</html>

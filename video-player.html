@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<link rel="stylesheet" href="assets/css/video-js.min.css" />
+		<link rel="stylesheet" href="assets/css/videojs-playlist-ui.vertical.css" />
+    <link rel="stylesheet" href="assets/css/all.min.css" />
+  </head>
+  <body>
+    <div id="vplayer">
+      <video class="video-js" id="vplayer-video" controls preload="none"></video>
+      <div class="vjs-playlist"></div>
+      <button class="vjs-stop-control vjs-control vjs-button" type="button" title="Stop" aria-disabled="false">
+        <span class="vjs-icon-placeholder" aria-hidden="true" style="display: inline-flex;margin-top: 4.5%;"><i class="fas fa-stop"></i></span>
+        <span class="vjs-control-text" aria-live="polite" style="font-size: inherit;">Stop</span>
+      </button>      
+      <div id="vplayer-playlist" class="vplayer-layer-control"><i class="fas fa-bars"></i></div>
+      <div id="vplayer-expand" class="vplayer-layer-control"><i class="fas fa-external-link-square-alt"></i></div>
+    </div>
+  </body>
+  <script src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="assets/js/libs/video.core.novtt.min.js"></script>
+  <script src="assets/js/libs/videojs-playlist.min.js"></script>
+  <script src="assets/js/libs/videojs-playlist-ui.js"></script>
+  <script>
+    var player, b = jQuery('body'), jb = parent.jQuery(parent.document.body)
+    function stop(){
+      player.pause()
+      player.src('video.mp4')
+      b.removeClass('expanded')
+      jb.removeClass('full-video').removeClass('embed-video')
+    }
+    function play(src){
+      console.warn('PLAY', src)
+      player.pause()
+      player.playlist(src)
+      player.playlist.first()
+      player.play()
+    }  
+    function load(){
+      if(!parent.lang){
+        return setTimeout(load, 1000)
+      }
+      let language = parent.lang.locale
+      let opts = {
+        autoplay: true,
+        language,
+        languages: {}
+      }
+      opts.languages[language] = Object.assign({}, parent.lang);
+      ['Now Playing', 'Up Next'].forEach(t => {
+        let k = t.replace(' ', '_').toUpperCase()
+        opts.languages[language][t] = parent.lang[k]
+      })
+      player = videojs('vplayer-video', opts) 
+      jQuery('#vplayer-playlist').detach().appendTo('#vplayer-video').on('click', () => {
+        jQuery('body').toggleClass('playlist')
+      })
+      var stopb = jQuery('.vjs-stop-control')
+      jQuery('.vjs-play-control').after(stopb)
+      stopb.on('click', stop)
+      jQuery('#vplayer-expand').detach().appendTo('#vplayer-video').on('click', () => {
+        if(b.hasClass('expanded')){
+          b.removeClass('expanded')
+          jb.removeClass('full-video').addClass('embed-video')
+        } else {
+          b.addClass('expanded')
+          jb.removeClass('embed-video').addClass('full-video')
+        }
+      })
+      player.playlistUi()
+      player.playlist.autoadvance(0)
+      player.playlist.repeat(true)
+    }
+    load()
+  </script>
+  <style type="text/css">
+    * {      
+      font-family: system-ui;
+    }
+    #vplayer-video {
+      width: 100vw;
+      height: 100vh;
+    }
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    .vjs-stop-control {
+      cursor: pointer;
+    }
+    .vplayer-layer-control {
+      color: white;
+      border-radius: 1em;
+      width: 1.2em;
+      height: 1.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      font-size: 1.8em;
+      cursor: pointer;
+      opacity: 1;
+      transition: opacity 0.1s linear 0s;
+      text-shadow: 2px 2px 20px black, 2px 2px 2px black;
+    }
+    .vjs-user-inactive:not(.vjs-paused) .vplayer-layer-control {
+      opacity: 0;
+      transition: opacity 0.4s linear 0s;
+    }
+    #vplayer-playlist {
+      top: 1.5vw;
+      right: 1.5vw;
+    }
+    #vplayer-expand {
+      top: 1.5vw;
+      left: 1.5vw;
+      right: auto;
+      bottom: auto;
+      transform: rotate(-90deg);
+      text-shadow: -2px 2px 20px black, -2px 2px 2px black;
+    }
+    #vplayer-video.vjs-fullscreen .vplayer-layer-control {
+      display: none;
+    }
+    body.expanded #vplayer-expand {
+      bottom: 2.5em;
+      left: auto;
+      right: 1.5vw;
+      top: auto;
+      transform: rotate(90deg);
+      text-shadow: 2px -2px 20px black, 2px -2px 2px black;
+    }
+    body.playlist .vjs-playlist {
+      position: absolute;
+      width: 34vw;
+      height: 100vh;
+      right: 0;
+      top: 0;
+    }
+    body.playlist div#vplayer-video {
+      width: 66vw;
+    }
+    .vjs-playlist .vjs-playlist-title-container {
+      position: static;
+    }
+    .vjs-playlist-vertical .vjs-playlist-thumbnail-placeholder {
+      height: auto;
+    }
+    .vjs-playlist .vjs-playlist-title-container {
+      padding: .1rem .2rem 0 .2rem;
+    }
+    .vjs-playlist .vjs-playlist-now-playing-text {
+      position: static;
+      margin: 0;
+      padding: .4rem .4rem 0 .4rem;
+      text-transform: uppercase;
+      font-size: .8em;
+    }
+  </style>
+</html>

@@ -1,0 +1,130 @@
+<html>
+	<head>
+		<title>Songtrip</title>
+		<style>
+			* {
+				overflow: hidden;
+			}
+			html {
+				--ball-height: 100px;
+			}
+			body {
+				margin: 0;
+				background-color: transparent;
+			}
+			#popup {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: var(--ball-height);
+				background: white;
+				border-radius: 50vmin;
+			}
+			#popup > div {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+			}
+			.popup-icon {
+				height: calc(var(--ball-height) * 0.35);
+				display: flex;
+				padding-bottom: 9vmin;
+			}
+			#popup i {
+				font-size: 15vmin;
+			}
+			#container {
+				width: 150px;
+				height: 142px;
+				position: absolute;
+				background-color: transparent;
+			}			
+			#ball {
+				border-radius: 50%;
+				position: absolute;
+				left: 50%;   
+				z-index: 2;
+				display: none;
+				border: 1px solid #c0c4cf;
+				background-color: white;	
+			}			
+			#shadow {
+				border-radius: 50%;
+				background-color: rgba(0, 0, 0, 0.5);
+				position: absolute;
+				bottom: 10px;
+				left: 50%;
+				z-index: 1;
+				display: none;
+			}			
+			img.loading {
+				width: 64px;
+				margin-top: 52px;
+				margin-left: 72px;
+				animation: 1s linear 0s infinite beat; 
+			}
+			@keyframes beat {
+				0% {
+					animation-timing-function: cubic-bezier(0.1028,0.2484,0.1372,0.849);
+					transform: scale(1);
+				}
+				34% {
+					animation-timing-function: cubic-bezier(0.7116,0.2095,0.8159,0.6876);
+					transform: scale(1.2);
+				}
+				68% {
+					animation-timing-function: cubic-bezier(0.1475,0.2888,0.294,0.883);
+					transform: scale(1.0268);
+				}
+				84% {
+					animation-timing-function: cubic-bezier(0.8176,0.2193,0.867,0.6889);
+					transform: scale(1.0932);
+				}
+				100% {
+					transform: scale(1);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<!--
+		-->
+		<div id="container">
+			<img class="loading" src="default_icon.png" />
+		</div>
+        <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+		<script type="text/javascript" defer src="assets/js/libs/jquery.easing.1.3.js"></script>
+		<script type="text/javascript">
+			/*
+			$(document).ready(function () {     
+				var bouncetime = 750;
+				var ballheight = 40;
+				var ballsize = 100;
+			
+				$('#ball').css({'width':ballsize, 'height':ballsize, 'margin-left':-(ballsize/2),'display':'block', 'bottom':ballheight});
+				$('#shadow').css({'width':ballsize*1.5, 'height':ballsize/3, 'margin-left':-(ballsize*0.75),'display':'block', 'opacity':0.2});
+			
+				ballbounce();
+				ballshadow();
+			
+				function ballbounce() {
+					$('#ball').animate({'bottom':20}, bouncetime, 'easeInQuad', function() {
+						$('#ball').animate({'bottom':ballheight}, bouncetime, 'easeOutQuad', function() {
+							ballbounce();
+						});
+					});
+				}
+				function ballshadow() {
+					$('#shadow').animate({'width':ballsize, 'height':ballsize/4, 'margin-left':-(ballsize/2), 'opacity':1}, bouncetime, 'easeInQuad', function() {
+						$('#shadow').animate({'width':ballsize*1.5, 'height':ballsize/3, 'margin-left':-(ballsize*0.75), 'opacity':0.2}, bouncetime, 'easeOutQuad', function() {
+							ballshadow();
+						});
+					});
+				}
+			});
+			*/
+		</script>
+        <link rel="stylesheet" href="assets/css/all.min.css" />
+	</body>
+</html>
