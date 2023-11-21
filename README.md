@@ -28,5 +28,5 @@ Please, feel free to contribute to the project by opening a discussion under Iss
 
 You can also help us by [improving/creating translations](https://github.com/efoxbr/songtrip/tree/main/lang).
 
-Do you want to thank me for the development and help maintain this project in another way? How about buying me a coffee via [PayPal by clicking here](https://www.paypal.com/donate/?item_name=megacubo.tv&cmd=_donations&business=efox.web%40gmail.com)? This will help me a lot! :)
+Do you want to thank me for the development and help maintain this project in another way? How about buying me a coffee via [PayPal by clicking here](https://www.paypal.com/donate/?item_name=songtrip.in&cmd=_donations&business=efox.web%40gmail.com)? This will help me a lot! :)
 
