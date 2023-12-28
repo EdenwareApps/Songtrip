@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://songtrip.in/articles/wp-content/uploads/2022/02/wlogo3.png" alt="Songtrip logo" title="Songtrip logo" />
+  <img src="https://edenware.app/songtrip/articles/wp-content/uploads/2022/02/wlogo3.png" alt="Songtrip logo" title="Songtrip logo" />
 </p>
 
 <br/>
@@ -13,7 +13,7 @@ That’s great, but every time you want to listen some music you have to spend s
 That’s when Songtrip can help you, it can build playlists based on a song or mood automatically. You just need to choose a song and Songtrip will put together a list of related songs in a few seconds for you to listen on your favorite player, so you can keep your vibe.
 
 <p align="center">
-  <img src="https://songtrip.in/articles/wp-content/uploads/2022/02/screenshot-800.jpg" alt="Songtrip logo" title="Songtrip logo" />
+  <img src="https://edenware.app/songtrip/articles/wp-content/uploads/2022/02/screenshot-800.jpg" alt="Songtrip logo" title="Songtrip logo" />
 </p>
 
 Even if you don’t have a specific song in mind, you can tell Songtrip how you’re feeling with very few clicks and generate a playlist easily that is in tune with your current mood.
