@@ -29,7 +29,7 @@
     "description": "Create related playlists from your music files.",
     "name": "songtrip",
     "icon": "./default_icon.png",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "permission": [
         "<all_urls>",
         "alwaysOnTopWindows",

@@ -1593,7 +1593,7 @@ appLoad(() => {
         let hasUpdates = await scanner.checkUpdates()
         if(hasUpdates){
             if(confirm(lang.NEW_VERSION_AVAILABLE)){
-                scanner.open('https://songtrip.in')
+                scanner.open('https://edenware.app/songtrip')
             }
         }
     }, 5000)

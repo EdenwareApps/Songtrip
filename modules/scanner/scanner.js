@@ -159,7 +159,7 @@ class SongtripServerClient extends Events {
             mbid: 7 * (24 * 3600)
         }
         this.enc = new Encoder('3Qe8OPBZOym#bX6!UxSyYHJ3')
-        this.socket = require('socket.io-client')('http://app.songtrip.in', {
+        this.socket = require('socket.io-client')('http://songtrip.edenware.app', {
             log: false,
             autoConnect: false
         })
